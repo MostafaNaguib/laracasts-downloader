@@ -79,13 +79,16 @@ class Parser
      */
     public static function getDownloadLink($html)
     {
-        preg_match("('\/downloads\/.*?')", $html, $matches);
+        //preg_match("('\/downloads\/.*?')", $html, $matches);
+        $exp = '/<source src="([^"]*)"/';
+        preg_match($exp, $html, $matches);
 
         if(isset($matches[0]) === false) {
             throw new NoDownloadLinkException();
         }
 
-        return LARACASTS_BASE_URL . substr($matches[0],1,-1);
+        return str_replace('source src="','http:',substr($matches[0],1,-1));
+        //return LARACASTS_BASE_URL . substr($matches[0],1,-1);
     }
 
     /**

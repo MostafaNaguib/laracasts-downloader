@@ -254,6 +254,7 @@ class Resolver
     {
         try {
             $downloadUrl = Parser::getDownloadLink($html);
+            echo $downloadUrl;
             $viemoUrl = $this->getRedirectUrl($downloadUrl);
             $finalUrl = $this->getRedirectUrl($viemoUrl);
         } catch(NoDownloadLinkException $e) {
@@ -275,6 +276,7 @@ class Resolver
         while (true) {
             try {
                 $downloadedBytes = file_exists($saveTo) ? filesize($saveTo) : 0;
+                Utils::writeln($finalUrl);
                 $req = $this->client->createRequest('GET', $finalUrl, [
                     'save_to' => fopen($saveTo, 'a'),
                     'verify' => false,
@@ -285,7 +287,7 @@ class Resolver
 
                 if (php_sapi_name() == "cli") { //on cli show progress
                     $req->getEmitter()->on('progress', function (ProgressEvent $e) use ($downloadedBytes) {
-                        printf("> Total: %d%% Downloaded: %s of %s     \r",
+                        printf(">  Total: %d%% Downloaded: %s of %s     \r",
                             Utils::getPercentage($e->downloaded + $downloadedBytes, $e->downloadSize),
                             Utils::formatBytes($e->downloaded + $downloadedBytes),
                             Utils::formatBytes($e->downloadSize));
